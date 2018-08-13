@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}創立帳戶{% endblock %}
+
+{% block content %}
+  <h1>創立帳號</h1>
+  <p>請填妥以下表單</p>
+  <form action="." method="post">
+    {{ user_form.as_p }}
+    {% csrf_token %}
+    <p><input type="submit" value="創建帳戶"></p>
+  </form>
+{% endblock %}

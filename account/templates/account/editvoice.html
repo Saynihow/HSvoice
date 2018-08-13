@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}台灣好聲音-個人聲音檔案{% endblock %}
+{% block style %}
+  * {
+    box-sizing: border-box;
+  }
+
+  .column {
+      float: left;
+      width: 100%;
+      padding: 5px;
+  }
+
+
+  .row::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+
+  .logo {
+
+    margin: 20px;
+
+  }
+
+  a {
+    font-size:x-large;
+  }
+
+  .menu {
+    padding: 30px;
+  }
+
+  .tablecontent {
+    color: darkorange;
+  }
+{% endblock %}
+{% block content %}
+    {% for image in image_list %}
+    <a><img border=0 src="{{ image.img.url }}" width="250" ></a>
+    {% for voice in voice_list %}
+    <div class="column">
+
+      <table border="5">
+        <th><a class="tablecontent"  href="edit_voice_detail/{{ voice.id }}">{{ voice.image.title }}-{{ voice.file_type }}</a></th>
+      </table>
+
+    </div>
+    {% endfor %}
+    {% endfor %}
+
+{% endblock %}

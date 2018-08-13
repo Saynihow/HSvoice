@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block title %}歡迎{% endblock %}
+
+{% block content %}
+  <h1>歡迎 {{ new_user.first_name }}!</h1>
+  <p>您的檔案已成功上傳，現在你能再次 <a href="{% url "upload_voice" %}">上傳檔案 </a>.</p>
+{% endblock %}

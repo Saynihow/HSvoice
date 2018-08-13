@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block style %}
+  * {
+    box-sizing: border-box;
+  }
+
+  .column {
+      float: left;
+      width: 100%;
+      padding: 5px;
+  }
+
+
+  .row::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+
+  .menu {
+    padding: 20px;
+  }
+
+  audio { width: 150px; display: block; margin:20px;}
+{% endblock %}
+
+{% block title %}爐石好聲音個人檔案{% endblock %}
+
+{% block content %}
+    <p>你的爐石資料庫</p>
+    <p>進入以下連結可修改圖片、語音</p>
+    {% for image in image_list %}
+    <div class="column">
+
+      <table border="3">
+        <th><a  href="edit_img/{{ image.id }}/">{{ image.title }}</a></th>
+        <th>{{ image.description|truncatewords:2 }}</th>
+        <th>{{ image.created }}</th>
+        {% if image.voice_set.all %}
+        <th><a href="edit_voice/{{ image.id }}/">台灣語音</a></th>
+        {% endif %}
+        <th></th>
+        <th><a href="delete_img/{{ image.id }}">刪除</a></th>
+      </table>
+
+    </div>
+    {% endfor %}
+
+
+    {% include "pagination.html" with page=image_list %}
+    <h2><a href="{% url "hearthstone:HS" %}">My hearthstone Taiwan voice web</a></h2>
+    <p>This is my site</p>
+  </div>
+
+{% endblock %}

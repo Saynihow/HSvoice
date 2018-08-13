@@ -1,0 +1,41 @@
+﻿{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <title>{% block title %}{% endblock %}</title>
+    <link href="account/static/css/style.css" rel="stylesheet" type="text/css">
+    <style>
+        {% block style %}{% endblock %}
+    </style>
+</head>
+<body>
+    <div id="header">
+        <span class="logo">台灣爐石好聲音</span>
+        {% if request.user.is_authenticated %}
+        <ul class="menu">
+            <li {% if section == "dashboard" %}class="selected"{% endif %}><a href="{% url "dashboard" %}">My dashboard</a></li>
+            <li {% if section == "images" %}class="selected"{% endif %}><a href="{% url "hearthstone:HS" %}">台灣爐石好聲音</a></li>
+            <li {% if section == "upload_image" %}class="selected"{% endif %}><a href="{% url "upload_image" %}">上傳爐石圖片</a></li>
+            <li {% if section == "upload_voice" %}class="selected"{% endif %}><a href="{% url "upload_voice" %}">上傳爐石語音吧!</a></li>
+            <li {% if section == "profile" %}class="selected"{% endif %}><a href="{% url "profile" %}">{{ user.first_name }}爐石專區</a></li>
+            <li {% if section == "people" %}class="selected"{% endif %}><a href="#">People</a></li>
+        </ul>
+        {% endif %}
+        
+        <span class="user">
+        {% if request.user.is_authenticated %}
+            Hello {{ request.user.first_name }}, <a href="{% url "logout" %}">Logout</a>
+        {% else %}
+            <a href="{% url "login" %}">Log-in</a>
+        {% endif %}
+        </span>
+    </div>
+    
+    <div id="content" class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

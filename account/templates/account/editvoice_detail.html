@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <h2>卡片-{{ voice.image.title }}</h2>
+
+  <h3>語音類型-{{ voice.file_type }}</h3>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">修改完成</button>
+  </form>
+
+  <p><a href="{% url 'profile' %}">回到個人檔案</a></p>
+{% endblock %}
