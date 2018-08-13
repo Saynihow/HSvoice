@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}{{ image.title }}{% endblock %}
+
+{% block content %}
+  <h1>{{ image.title }}</h1>
+  <h4>{{ image.version }}</h4>
+  <a><img border=0 src="{{ image.img.url }}" width="250" >
+  <p class="date">
+    Published {{ image.publish }} by {{ image.author }}
+  </p>
+
+  {{ image.description }}
+  {% for voice in image.voice_set.all %}
+            <p>{{ voice.file_type }}</p>
+            <audio controls id="player1">
+              <source id="player-src1" src="{{ voice.audio_file.url }}" type="audio/mpeg">
+            </audio>
+  {% endfor %}
+
+
+
+{% endblock %}

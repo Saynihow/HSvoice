@@ -1,0 +1,44 @@
+﻿{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <title>{% block title %}{% endblock %}</title>
+    <link href="hearthstone/static/css/style.css" rel="stylesheet">
+    
+    <script type="text/javascript" src="layout/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="layout/scripts/jquery.cycle.min.js"></script>
+    <style>
+        {% block style %}{% endblock %}
+    </style>
+</head>
+<body>
+    <div id="header">
+        <span class="logo"><a href="{% url "hearthstone:HS" %}">台灣爐石好聲音</a></span>
+        {% if request.user.is_authenticated %}
+        <ul class="menu">
+            <li {% if section == "dashboard" %}class="selected"{% endif %}><a href="{% url "dashboard" %}">儀表板</a></li>
+            <li {% if section == "images" %}class="selected"{% endif %}><a href="{% url "hearthstone:HS" %}">台灣爐石好聲音</a></li>
+            <li {% if section == "upload_image" %}class="selected"{% endif %}><a href="{% url "upload_image" %}">上傳爐石圖片</a></li>
+            <li {% if section == "upload_voice" %}class="selected"{% endif %}><a href="{% url "upload_voice" %}">上傳爐石語音吧!</a></li>
+            <li {% if section == "profile" %}class="selected"{% endif %}><a href="{% url "profile" %}">{{ user.first_name }}爐石專區</a></li>
+            <li {% if section == "people" %}class="selected"{% endif %}><a href="#">People</a></li>
+        </ul>
+        {% endif %}
+        
+        <span class="user">
+        {% if request.user.is_authenticated %}
+            你好呀 {{ request.user.first_name }}, <a href="{% url "logout" %}">登出</a>
+        {% else %}
+            <a href="{% url "login" %}">登入</a>
+        {% endif %}
+        </span>
+    </div>
+    
+    <div id="content" class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

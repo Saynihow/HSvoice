@@ -1,0 +1,78 @@
+﻿{% load static %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <title>爐石台灣好聲音</title>
+    {% load staticfiles %}
+    <!--link href="/static/css/base.css" rel="stylesheet" media="all"-->
+     <link href="hearthstone/static/css/style.css" rel="stylesheet">
+    <style>
+    * {
+        box-sizing: border-box;
+    }
+
+    .column {
+        float: left;
+        width: 33%;
+        padding: 50px;
+     }
+
+    a {
+       color: #5599FF;
+    }
+
+    #sidebar {
+       color: #00BFFF;
+    }
+
+    .row::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+
+    audio { width: 150px; display: block; margin:20px;}
+</style>
+</head>
+<body>
+  <h1>阿森(aSen) web</h1>
+  <ul class="menu">
+            <li {% if section == "dashboard" %}class="selected"{% endif %}><a href="{% url "dashboard" %}">儀錶板</a></li>
+            <li {% if section == "images" %}class="selected"{% endif %}><a href="{% url "hearthstone:HS" %}">台灣爐石好聲音</a></li>
+            <li {% if section == "upload_image" %}class="selected"{% endif %}><a href="{% url "upload_image" %}">上傳爐石圖片</a></li>
+            <li {% if section == "upload_voice" %}class="selected"{% endif %}><a href="{% url "upload_voice" %}">上傳爐石語音吧!</a></li>
+            <li {% if section == "profile" %}class="selected"{% endif %}><a href="{% url "profile" %}">{{ user.first_name }}爐石專區</a></li>
+            <li {% if section == "search" %}class="selected"{% endif %}><a href="{% url "hearthstone:image_search" %}">搜尋卡片</a></li>
+  </ul>
+
+
+
+
+  <div class="container-fluid" style="background-color:#FFBB73;">
+    {% for image in image_list %}
+    <div class="column">
+
+        <a href="{{ image.get_absolute_url }}"><img border=0 src="{{ image.img.url }}" width="250" ></a>
+
+
+        <ul>
+            <li>{{ image.description|truncatewords:2 }}</li>
+            <li>{{ image.created }}</li>
+        </ul>
+
+    </div>
+    {% endfor %}
+
+  </div>
+  <div id="sidebar"  style="background-color:powderblue;">
+      {% include "pagination.html" with page=image_list %}
+      <h2><a href="{% url "hearthstone:HS" %}">My hearthstone Taiwan voice web</a></h2>
+       <p>This is my site</p>
+  </div>
+
+</body>
+</html>

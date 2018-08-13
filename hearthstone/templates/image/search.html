@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+  {% if "query" in request.GET %}
+    <h1>Posts containing "{{ cd.query }}"</h1>
+    <h3>Fount {{ total_results }} result{{total_results|pluralize}}</h3>
+    {% for result in results %}
+      {% with image=result.object %}
+        <h4><a href="{{ image.get_absolute_url }}">{{ image.title }}</a></h4>
+        {{ image.body|truncatewords:5 }}
+      {% endwith %}
+    {% empty %}
+      <p>There are no results for your query.</p>
+    {% endfor %}
+	<p><a href="{% url "hearthstone:image_search" %}">再搜尋一次</a></p>
+  {% else %}
+    <h1>爐石卡片搜尋</h1>
+    <form action="." method="get">
+      {{ form.as_p }}
+	  <input type="submit" value="開始搜尋">
+    </form>
+  {% endif %}
+{% endblock %}
