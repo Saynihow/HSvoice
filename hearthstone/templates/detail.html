@@ -3,6 +3,7 @@
 {% block title %}{{ image.title }}{% endblock %}
 
 {% block content %}
+  <div class="center">
   <h1>{{ image.title }}</h1>
   <h4>{{ image.version }}</h4>
   <a><img border=0 src="{{ image.img.url }}" width="250" >
@@ -10,14 +11,92 @@
     Published {{ image.publish }} by {{ image.author }}
   </p>
 
-  {{ image.description }}
+
+  {{ image.description }}<br>
+
+  {% with total_likes=image.user_like_image.count user_like_image=image.user_like_image.all %}
+        <div class="image-info">
+                <div>
+                    <span class="count">
+                        <span class="total">{{ total_likes }}</span>
+                        位玩家喜歡
+                    </span>
+                    <a href="#" data-id="{{ image.id }}" data-action="{% if request.user in user_like_image %}un{% endif %}like" class="like button">
+
+                        {% if request.user not in user_like_image %}
+                            挖尬意
+                        {% else %}
+                            我後悔了
+                        {% endif %}
+
+                    </a>
+                 </div>
+        </div>
+  {% endwith %}
   {% for voice in image.voice_set.all %}
             <p>{{ voice.file_type }}</p>
             <audio controls id="player1">
               <source id="player-src1" src="{{ voice.audio_file.url }}" type="audio/mpeg">
             </audio>
   {% endfor %}
+  </div>
 
+  {% with comments.count as total_comments %}
+    <h2>
+      {{ total_comments }} 篇評論
+    </h2>
+  {% endwith %}
+
+  {% for comment in comments %}
+    <div class="comment">
+      <p class="info">
+        by {{ comment.name }}
+        {{ comment.created }}
+      </p>
+      {{ comment.body|linebreaks }}
+    </div>
+  {% empty %}
+    <p>尚未有評論</p>
+  {% endfor %}
+
+  {% if new_comment %}
+    <h2>你的評論已加入</h2>
+  {% else %}
+    <h2>增加一點評論一點聲音</h2>
+    <form action="." method="post">
+      {{ comment_form.as_p }}
+      {% csrf_token %}
+      <p><input type="submit" value="加入評論"></p>
+    </form>
+  {% endif %}
+
+{% endblock %}
+
+{% block domready %}
+     $('a.like').click(function(e){
+        e.preventDefault();
+        $.post('{% url "hearthstone:like_image" %}',
+            {
+                id: $(this).data('id'),
+                action: $(this).data('action')
+            },
+            function(data){
+                if (data['status'] == 'ok')
+                {
+                    var previous_action = $('a.like').data('action');
+
+                    // toggle data-action
+                    $('a.like').data('action', previous_action == 'like' ? 'unlike' : 'like');
+                    // toggle link text
+                    $('a.like').text(previous_action == 'like' ? '不喜歡' : '喜歡');
+
+                    // update total likes
+                    var previous_likes = parseInt($('span.count .total').text());
+                    $('span.count .total').text(previous_action == 'like' ? previous_likes + 1 : previous_likes - 1);
+                }
+        });
+
+    });
 
 
 {% endblock %}

@@ -15,6 +15,10 @@
         box-sizing: border-box;
     }
 
+    .center {
+        text-align: center;
+    }
+
     .column {
         float: left;
         width: 33%;
@@ -38,21 +42,26 @@
     audio { width: 150px; display: block; margin:20px;}
 </style>
 </head>
-<body>
+<body style="font-family: Comic Sans MS,arial,helvetica,sans-serif,FangSong;">
   <h1>阿森(aSen) web</h1>
-  <ul class="menu">
+  <ul class="menu"><span style="font-size:18px;">
             <li {% if section == "dashboard" %}class="selected"{% endif %}><a href="{% url "dashboard" %}">儀錶板</a></li>
             <li {% if section == "images" %}class="selected"{% endif %}><a href="{% url "hearthstone:HS" %}">台灣爐石好聲音</a></li>
             <li {% if section == "upload_image" %}class="selected"{% endif %}><a href="{% url "upload_image" %}">上傳爐石圖片</a></li>
             <li {% if section == "upload_voice" %}class="selected"{% endif %}><a href="{% url "upload_voice" %}">上傳爐石語音吧!</a></li>
             <li {% if section == "profile" %}class="selected"{% endif %}><a href="{% url "profile" %}">{{ user.first_name }}爐石專區</a></li>
             <li {% if section == "search" %}class="selected"{% endif %}><a href="{% url "hearthstone:image_search" %}">搜尋卡片</a></li>
+  </span>
   </ul>
 
 
 
 
   <div class="container-fluid" style="background-color:#FFBB73;">
+　<span style="font-size:18px;">
+    {% if tag %}
+      <h2>有 "{{ tag.name }}"標籤的好聲音</h2>
+    {% endif %}
     {% for image in image_list %}
     <div class="column">
 
@@ -62,16 +71,25 @@
         <ul>
             <li>{{ image.description|truncatewords:2 }}</li>
             <li>{{ image.created }}</li>
+            <li class="tags">標籤:
+                  {% for tag in image.tags.all %}
+                    <a href="{% url "hearthstone:image_list_by_tag" tag.slug %}">
+                      {{ tag.name }}
+                    </a>
+                    {% if not forloop.last %}, {% endif %}
+                  {% endfor %}</li>
         </ul>
 
     </div>
     {% endfor %}
-
+  </span>
   </div>
-  <div id="sidebar"  style="background-color:powderblue;">
+  <div class="center" id="sidebar"  style="background-color:powderblue;" >
+      <span style="font-size:24px;">
       {% include "pagination.html" with page=image_list %}
       <h2><a href="{% url "hearthstone:HS" %}">My hearthstone Taiwan voice web</a></h2>
-       <p>This is my site</p>
+      <p>This is my site</p>
+      </span>
   </div>
 
 </body>

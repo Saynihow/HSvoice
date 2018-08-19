@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from taggit.managers import TaggableManager
 import os.path
 
 
@@ -12,6 +13,8 @@ class Image(models.Model):
     author = models.ForeignKey(User,
                                related_name='hs_images')
     description = models.TextField(verbose_name='說說這張卡片帶給你甚麼')            # 图片描述, 长文本类型
+    slug = models.SlugField(max_length=250,verbose_name='英文標題', blank=True)
+    tags = TaggableManager(verbose_name='標籤(請輸入英文且複數標籤以半形逗號分隔 範例:Kerker, nono)')
     manavalue = models.CharField(max_length=10, default=0, verbose_name='水晶值')
     attackvalue = models.CharField(max_length=10, blank=True, verbose_name='攻擊值')
     bloodvalue = models.CharField(max_length=10, blank=True, verbose_name='血量')
@@ -62,6 +65,9 @@ class Image(models.Model):
     publish = models.DateTimeField(default=timezone.now, verbose_name='上傳時間')
     created = models.DateTimeField(auto_now_add=True)  # 创建时间,自动添加当前时间
     updated = models.DateTimeField(auto_now=True)
+    user_like_image = models.ManyToManyField(User,
+                                             related_name='images_liked',
+                                             blank=True)
 
     class Meta:
         ordering = ('-publish',)
@@ -74,7 +80,8 @@ class Image(models.Model):
                        args=[self.publish.year,
                              self.publish.strftime('%m'),
                              self.publish.strftime('%d'),
-                             self.title])
+                             self.author_id,
+                             self.id])
 
 class Voice(models.Model):
     image = models.ForeignKey(Image, on_delete=models.CASCADE, verbose_name='連結圖片')  #many-to-one 一張image會有多種voice
@@ -82,6 +89,8 @@ class Voice(models.Model):
         ('登場', '登場'),
         ('進攻', '進攻'),
         ('死亡', '死亡'),
+        ('對戰開始', '對戰開始'),
+        ('自由發揮', '自由發揮'),
     )
     file_type = models.CharField(max_length=10, choices=FILE_TYPE_CHOICES, verbose_name='語音類型')
     audio_file = models.FileField(upload_to='voice', verbose_name='語音檔案')
@@ -93,3 +102,16 @@ class Voice(models.Model):
     def __str__(self):
         return self.image.title + '-' + self.file_type
 
+class Comment(models.Model):
+    image = models.ForeignKey(Image, related_name='comments')
+    name = models.CharField(max_length=80)
+    body = models.TextField(verbose_name='內容')
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ('created',)
+
+    def __str__(self):
+        return 'Comment by {} on {}'.format(self.name, self.image)
