@@ -7,7 +7,7 @@ Voice = apps.get_model('hearthstone', 'Voice')
 
 class LoginForm(forms.Form):
     username = forms.CharField()
-    password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(label='密碼', widget=forms.PasswordInput)
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(label='密碼', widget=forms.PasswordInput)
@@ -23,10 +23,16 @@ class UserRegistrationForm(forms.ModelForm):
             raise forms.ValidationError('Passwords don\'t match.')
         return cd['password2']
 
+    def __init__(self, *args, **kwargs):
+        super(UserRegistrationForm, self).__init__(*args, **kwargs)
+        self.fields['username'].label = "使用者名稱(僅能包含英文字母、數字和@/./+/-/_)"
+        self.fields['first_name'].label = "名字"
+        self.fields['email'].label = "電子信箱"
+
 class ImageForm(forms.ModelForm):
     class Meta:
         model = Image
-        exclude = ["author"]
+        exclude = ["author", "slug", "user_like_image"]
 
 class Voiceform(forms.ModelForm):
     class Meta:
