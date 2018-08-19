@@ -20,9 +20,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 # 导入视图
 from hearthstone import views
+admin.autodiscover()
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+
     # 添加URL, 这里^$表示首页的请求交给views下的index函数处理
     url(r'^HS/', include('hearthstone.urls', namespace='hearthstone')),
     url(r'^account/', include('account.urls')),

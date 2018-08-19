@@ -12,27 +12,31 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 default_encoding = 'utf-8'
 import os
 from django.core.urlresolvers import reverse_lazy
-
+import django_heroku
+from decouple import config, Csv
+import dj_database_url
 
 LOGIN_REDIRECT_URL = '/account/'
 LOGIN_URL = '/account/login/'
 LOGOUT_URL = '/account/logout/'
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#AWS storage setting
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-
+AWS_STORAGE_BUCKET_NAME = 'hstaiwanvoice' # name of AWS bucket for project
+AWS_S3_CUSTOM_DOMAIN = 'hstaiwanvoice.s3.amazonaws.com'
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+AWS_LOCATION = 'media'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATIC_URL = "https://hstaiwanvoice.s3.amazonaws.com/media/"
+DEFAULT_FILE_STORAGE = 'mysite.storage_backends.MediaStorage'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
-
+#ALLOWED_HOSTS = [".herokuapp.com"]
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
 # Application definition
 
@@ -43,11 +47,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'taggit',
     'hearthstone',
+    'storages',
     'account',
     'bootstrapform',
-    'haystack',
+
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -59,6 +64,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -84,15 +90,23 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
+# SECURITY WARNING: keep the secret key used in production secret!
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG',default=True, cast=bool)
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': config('DB_NAME'),
+        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+'''
+DATABASES = { 'default': dj_database_url.parse('postgres://hsfsbfcrlgrncr:4efcb16ca50d1e4ea03f1147c85d383522690f906cda1969916fc4c7914591db@ec2-107-21-98-165.compute-1.amazonaws.com:5432/dc2k43fs2mhbq6') }
 
-
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
@@ -125,7 +139,7 @@ HAYSTACK_CONNECTIONS = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
-LANGUAGE_CODE = 'zh-TW'
+LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Taipei'
 
@@ -138,12 +152,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
-
+'''
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "/hearthstone/static"),#hearthstone is APP name
 ]
+'''
 #避免UnicodeError
 FILE_CHARSET = 'utf-8'
 DEFAULT_CHARSET='utf-8'
@@ -153,3 +168,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
 MEDIA_URL = '/media/'
+
+django_heroku.settings(locals())
+
