@@ -7,3 +7,4 @@ first project
 3. 文章圖片喜歡功能採用AJAX  
 4. 使用solr網站內全文字index搜尋功能(本機限定)  
 5. 架設於heroku，資料圖片處理交由AWS  
+demo: https://hstaiwanvoice.herokuapp.com/HS
